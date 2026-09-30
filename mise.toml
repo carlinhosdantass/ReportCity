@@ -1,0 +1,47 @@
+[tools]
+java = "temurin-21"
+go = "1.25"
+
+[tasks.build]
+description = "Compila a API Kotlin e o serviço Go"
+depends = ["build:api", "build:priority"]
+
+[tasks."build:api"]
+dir = "api"
+run = "../gradlew assemble"
+
+[tasks."build:priority"]
+dir = "services/priority"
+run = "go build ./..."
+
+[tasks.test]
+description = "Executa todos os testes"
+depends = ["test:api", "test:priority"]
+
+[tasks."test:api"]
+dir = "api"
+run = "../gradlew test"
+
+[tasks."test:priority"]
+dir = "services/priority"
+run = "go test ./..."
+
+[tasks.lint]
+description = "Executa as verificações disponíveis na Sprint 0"
+depends = ["lint:api", "lint:priority"]
+
+[tasks."lint:api"]
+dir = "api"
+run = "../gradlew check"
+
+[tasks."lint:priority"]
+dir = "services/priority"
+run = "gofmt -l ."
+
+[tasks.up]
+description = "Valida o ambiente Docker Compose da sprint atual"
+run = "docker compose config"
+
+[tasks.ci]
+description = "Reproduz localmente o pipeline de integração contínua"
+depends = ["lint", "test", "build"]

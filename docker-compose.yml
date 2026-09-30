@@ -1,0 +1,6 @@
+name: report-city
+
+# Os serviços serão conteinerizados nas sprints que exigirem ambiente integrado.
+# Na Sprint 0, nenhum serviço de infraestrutura é necessário.
+services: {}
+

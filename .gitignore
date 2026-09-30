@@ -1,0 +1,12 @@
+.gradle/
+.gradle-user-home/
+.kotlin/
+build/
+api/build/
+services/priority/priority
+services/priority/priority.exe
+.idea/
+*.iml
+.mise.local.toml
+.env
+.DS_Store
