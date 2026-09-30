@@ -21,7 +21,7 @@ Cliente → API Kotlin/Ktor → PostgreSQL
                     └── gRPC → Serviço Go de prioridade
 ```
 
-A API será proprietária do domínio e do banco. O serviço Go calculará prioridades sem acesso direto ao PostgreSQL. Esses componentes serão integrados apenas nas sprints correspondentes. Consulte [a proposta](docs/proposta.md) para as decisões completas.
+A API será proprietária do domínio e do banco. O serviço Go calculará prioridades sem acesso direto ao PostgreSQL. Esses componentes serão integrados apenas nas sprints correspondentes.
 
 ## Estrutura do monorepo
 
@@ -88,7 +88,5 @@ Na Sprint 0 não há infraestrutura para iniciar. Por isso, a task valida o arqu
 - [x] Workflow de CI para push e pull request.
 - [x] Proposta e decisão de arquitetura documentadas.
 - [x] Integrantes, matrículas, coorte e integração declarados.
-- [ ] Papéis dos integrantes definidos pela equipe.
-- [ ] Repositório confirmado como público e CI verde em `main`.
 - [ ] GitHub Project com pelo menos cinco itens, todos priorizados e três estimados.
 - [ ] Vídeo de apresentação de cinco minutos.
