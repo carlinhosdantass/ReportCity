@@ -39,8 +39,17 @@ dir = "services/priority"
 run = "gofmt -l ."
 
 [tasks.up]
-description = "Valida o ambiente Docker Compose da sprint atual"
-run = "docker compose config"
+description = "Sobe o PostgreSQL"
+run = "docker compose up -d"
+
+[tasks.down]
+description = "Para o PostgreSQL"
+run = "docker compose down"
+
+[tasks.run]
+description = "Executa a API"
+dir = "api"
+run = "../gradlew run"
 
 [tasks.ci]
 description = "Reproduz localmente o pipeline de integração contínua"

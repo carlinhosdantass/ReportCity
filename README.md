@@ -2,45 +2,90 @@
 
 API para cadastrar e consultar problemas urbanos, desenvolvida na disciplina DIM0547 — Desenvolvimento de Sistemas Web II da UFRN.
 
-O sistema terá apenas duas entidades: **Categoria** e **Ocorrência**. Uma ocorrência pertence a uma categoria. Na Sprint 0, existem somente a estrutura do projeto, os testes e as rotas `/health`.
+O sistema possui duas entidades: **Category** e **Issue**. Uma categoria pode ter várias ocorrências, e cada ocorrência pertence a uma categoria.
 
-## Stack
+## Tecnologias
 
-- Kotlin 2.3 e Ktor 3.5;
-- Go 1.25;
-- PostgreSQL nas próximas sprints;
-- gRPC e Protocol Buffers a partir da Sprint 2;
-- Gradle Wrapper, mise, Docker Compose e GitHub Actions.
-
-## Arquitetura planejada
-
-```text
-Cliente → API Kotlin/Ktor → PostgreSQL
-                    |
-                    └── gRPC → Serviço Go
-```
-
-A API cuidará das categorias, das ocorrências e do banco. O serviço Go fará um cálculo simples e não acessará o banco. Veja os detalhes em [docs/proposta.md](docs/proposta.md).
+- Kotlin, Ktor e Gradle;
+- PostgreSQL, Exposed, HikariCP e Flyway;
+- OpenAPI e Swagger UI;
+- Go no serviço de prioridade;
+- mise, Docker Compose e GitHub Actions.
 
 ## Estrutura
 
 ```text
-api/                 API Kotlin/Ktor
-services/priority/   serviço Go
-protos/              futuros contratos gRPC
-docs/                proposta do projeto
-.github/workflows/   integração contínua
+api/src/main/kotlin/br/ufrn/reportcity/
+├── domain/       entidades e interfaces dos repositórios
+├── application/  regras e casos de uso
+└── adapters/     HTTP, PostgreSQL e memória
 ```
 
-## Configuração
+O domínio não importa Ktor, Exposed, JDBC ou outras bibliotecas de infraestrutura.
+
+## Preparar o ambiente
 
 Instale [mise](https://mise.jdx.dev/getting-started.html) e Docker Desktop. Depois execute:
 
 ```shell
 mise install
+mise run up
 ```
 
-O Gradle é executado pelo Wrapper e não precisa ser instalado separadamente.
+`mise run up` inicia o PostgreSQL com estes valores padrão:
+
+```text
+Banco: reportcity
+Usuário: reportcity
+Senha: reportcity
+Porta: 5432
+```
+
+Eles podem ser alterados pelas variáveis `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_PORT`.
+
+## Executar a API
+
+Com o PostgreSQL iniciado:
+
+```shell
+mise run run
+```
+
+A API usa estas variáveis, todas opcionais no ambiente local:
+
+```text
+DB_URL=jdbc:postgresql://localhost:5432/reportcity
+DB_USER=reportcity
+DB_PASSWORD=reportcity
+PORT=8080
+```
+
+O Flyway aplica automaticamente as migrações ao iniciar a API.
+
+## Rotas
+
+```text
+GET    /health
+POST   /categories
+GET    /categories
+GET    /categories/{id}
+PUT    /categories/{id}
+DELETE /categories/{id}
+POST   /issues
+GET    /issues?page=0&size=10&categoryId=1
+GET    /issues/{id}
+PUT    /issues/{id}
+DELETE /issues/{id}
+```
+
+O tamanho máximo de página é 100. Uma categoria com ocorrências não pode ser excluída.
+
+## OpenAPI
+
+- Swagger UI: `http://localhost:8080/docs`
+- Especificação gerada: `http://localhost:8080/docs/documentation.yaml`
+
+A especificação é gerada a partir das descrições das rotas Ktor.
 
 ## Build e testes
 
@@ -51,40 +96,37 @@ mise run lint
 mise run ci
 ```
 
-`mise run ci` executa as mesmas verificações do GitHub Actions.
+`mise run ci` executa as mesmas verificações do GitHub Actions. Os testes adicionais e o teste de arquitetura ficaram para a Sprint 2, conforme orientação da disciplina.
 
-## Executar a API
+Para parar o banco:
 
 ```shell
-mise exec -- ./gradlew :api:run
+mise run down
 ```
 
-No Windows, o Wrapper também pode ser chamado com `./gradlew.bat :api:run`. A API responde em `http://localhost:8080/health`.
-
-## Executar o serviço Go
+## Serviço Go
 
 ```shell
 mise exec -- go run ./services/priority
 ```
 
-O serviço responde em `http://localhost:8081/health`.
+O serviço responde em `http://localhost:8081/health`. O cálculo de prioridade e o gRPC serão implementados somente na Sprint 2.
 
-## Docker Compose
+## Sprint 1
 
-```shell
-mise run up
-```
+- [x] Duas entidades relacionadas com CRUD completo.
+- [x] Filtro por categoria e paginação no SQL.
+- [x] Camadas separadas e domínio sem framework.
+- [x] PostgreSQL no Docker Compose.
+- [x] Migrações versionadas com Flyway.
+- [x] Validação e erros em `application/problem+json`.
+- [x] OpenAPI gerado do código e Swagger UI.
+- [ ] GitHub Projects atualizado e cartões ligados aos pull requests.
+- [ ] Link do vídeo de cinco minutos.
 
-Na Sprint 0, essa task apenas valida o arquivo Compose.
+## Equipe
 
-## Sprint 0
-
-- [x] Monorepo com `api/`, `services/`, `protos/` e `docs/`.
-- [x] API Ktor e serviço Go mínimos, com testes.
-- [x] Tasks de build, teste, lint, Compose e CI.
-- [x] GitHub Actions para push e pull request.
-- [x] Proposta, arquitetura, equipe, coorte e integração documentadas.
-- [x] Papéis dos integrantes definidos.
-- [x] GitHub Project com pelo menos cinco itens priorizados e três estimados.
-- [x] CI verde na branch `main` após o push.
-- [x] Vídeo de apresentação de cinco minutos.
+- Carlos Eduardo Fonseca Dantas — 20240026911.
+- Luis Carlos Tavares Xavier — 20240029664.
+- Coorte A.
+- Sem integração com outra disciplina.

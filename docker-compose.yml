@@ -1,6 +1,16 @@
 name: report-city
 
-# Os serviços serão conteinerizados nas sprints que exigirem ambiente integrado.
-# Na Sprint 0, nenhum serviço de infraestrutura é necessário.
-services: {}
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-reportcity}
+      POSTGRES_USER: ${POSTGRES_USER:-reportcity}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-reportcity}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
+volumes:
+  postgres_data:
