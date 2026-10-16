@@ -1,49 +1,48 @@
 # ReportCity
 
-Plataforma colaborativa para registro e acompanhamento de problemas urbanos, desenvolvida na disciplina DIM0547 — Desenvolvimento de Sistemas Web II da UFRN.
+API para cadastrar e consultar problemas urbanos, desenvolvida na disciplina DIM0547 — Desenvolvimento de Sistemas Web II da UFRN.
 
-O objetivo é centralizar relatos hoje dispersos em redes sociais e grupos de mensagens. Cidadãos poderão registrar ocorrências, confirmar problemas identificados por outras pessoas e acompanhar sua evolução. O projeto está na **Sprint 0**: somente a fundação técnica e o planejamento estão implementados.
+O sistema terá apenas duas entidades: **Categoria** e **Ocorrência**. Uma ocorrência pertence a uma categoria. Na Sprint 0, existem somente a estrutura do projeto, os testes e as rotas `/health`.
 
-## Stack planejada
+## Stack
 
-- Kotlin 2.3 e Ktor 3.5 na API principal;
-- Go 1.25 no futuro serviço de prioridade;
-- PostgreSQL para persistência nas próximas sprints;
-- gRPC e Protocol Buffers para comunicação futura entre serviços;
-- Gradle Wrapper e mise para build, testes e ambiente;
-- Docker Compose e GitHub Actions.
+- Kotlin 2.3 e Ktor 3.5;
+- Go 1.25;
+- PostgreSQL nas próximas sprints;
+- gRPC e Protocol Buffers a partir da Sprint 2;
+- Gradle Wrapper, mise, Docker Compose e GitHub Actions.
 
-## Arquitetura
+## Arquitetura planejada
 
 ```text
 Cliente → API Kotlin/Ktor → PostgreSQL
                     |
-                    └── gRPC → Serviço Go de prioridade
+                    └── gRPC → Serviço Go
 ```
 
-A API será proprietária do domínio e do banco. O serviço Go calculará prioridades sem acesso direto ao PostgreSQL. Esses componentes serão integrados apenas nas sprints correspondentes.
+A API cuidará das categorias, das ocorrências e do banco. O serviço Go fará um cálculo simples e não acessará o banco. Veja os detalhes em [docs/proposta.md](docs/proposta.md).
 
-## Estrutura do monorepo
+## Estrutura
 
 ```text
 api/                 API Kotlin/Ktor
-services/priority/   serviço Go de prioridade
-protos/              futuros contratos Protocol Buffers
-docs/                proposta e decisões do projeto
+services/priority/   serviço Go
+protos/              futuros contratos gRPC
+docs/                proposta do projeto
 .github/workflows/   integração contínua
 ```
 
-## Requisitos e configuração
+## Configuração
 
-Instale [mise](https://mise.jdx.dev/getting-started.html) e Docker Desktop. Na raiz do repositório, instale as versões de Java e Go declaradas pelo projeto:
+Instale [mise](https://mise.jdx.dev/getting-started.html) e Docker Desktop. Depois execute:
 
 ```shell
 mise install
 ```
 
-O Gradle não precisa ser instalado globalmente: o projeto usa o Gradle Wrapper.
+O Gradle é executado pelo Wrapper e não precisa ser instalado separadamente.
 
-## Build, testes e CI local
+## Build e testes
 
 ```shell
 mise run build
@@ -52,7 +51,7 @@ mise run lint
 mise run ci
 ```
 
-`mise run ci` reproduz a verificação executada pelo GitHub Actions.
+`mise run ci` executa as mesmas verificações do GitHub Actions.
 
 ## Executar a API
 
@@ -60,9 +59,7 @@ mise run ci
 mise exec -- ./gradlew :api:run
 ```
 
-A API responde em `http://localhost:8080/health`.
-
-No Windows PowerShell, use `./gradlew.bat :api:run` caso execute o Wrapper diretamente.
+No Windows, o Wrapper também pode ser chamado com `./gradlew.bat :api:run`. A API responde em `http://localhost:8080/health`.
 
 ## Executar o serviço Go
 
@@ -78,15 +75,16 @@ O serviço responde em `http://localhost:8081/health`.
 mise run up
 ```
 
-Na Sprint 0 não há infraestrutura para iniciar. Por isso, a task valida o arquivo Compose, que será ampliado quando banco e integração forem exigidos.
+Na Sprint 0, essa task apenas valida o arquivo Compose.
 
-## Status da Sprint 0
+## Sprint 0
 
-- [x] Estrutura do monorepo criada.
-- [x] API Ktor e serviço Go mínimos, compiláveis e testados.
-- [x] Tasks `build`, `test`, `lint`, `up` e `ci` definidas no mise.
-- [x] Workflow de CI para push e pull request.
-- [x] Proposta e decisão de arquitetura documentadas.
-- [x] Integrantes, matrículas, coorte e integração declarados.
-- [ ] GitHub Project com pelo menos cinco itens, todos priorizados e três estimados.
-- [ ] Vídeo de apresentação de cinco minutos.
+- [x] Monorepo com `api/`, `services/`, `protos/` e `docs/`.
+- [x] API Ktor e serviço Go mínimos, com testes.
+- [x] Tasks de build, teste, lint, Compose e CI.
+- [x] GitHub Actions para push e pull request.
+- [x] Proposta, arquitetura, equipe, coorte e integração documentadas.
+- [x] Papéis dos integrantes definidos.
+- [x] GitHub Project com pelo menos cinco itens priorizados e três estimados.
+- [x] CI verde na branch `main` após o push.
+- [x] Vídeo de apresentação de cinco minutos.
