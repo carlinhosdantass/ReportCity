@@ -24,4 +24,4 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run the local CI task
-        run: mise run ci
+        run: mise run --jobs 1 ci
